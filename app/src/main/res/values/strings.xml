@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Homework-04</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="intro_message">Camera2 API</string>
+    <string name="picture">Picture</string>
+    <string name="description_info">Info</string>
+    <string name="save">Save</string>
+    <string name="discard">Discard</string>
+    <string name="record">Record</string>
+    <string name="stop">Stop</string>
+    <string name="andrewID">Asanthan</string>
+</resources>

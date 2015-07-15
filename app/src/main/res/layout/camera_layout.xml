@@ -1,0 +1,61 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/tab2"
+    tools:context="com.example.arjuns.homework_03.CameraActivity">
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take picture"
+        android:id="@+id/capturePhotoButton"
+        android:layout_gravity="left|top" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Record Video"
+        android:id="@+id/captureVideoButton"
+        android:layout_gravity="right|top" />
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:id="@+id/photoView"
+        android:layout_gravity="center"
+        android:visibility="invisible"/>
+
+    <VideoView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:id="@+id/videoView"
+        android:layout_gravity="center"
+        android:visibility="invisible"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center">
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/discard"
+            android:id="@+id/discardButton"
+            android:layout_gravity="left|bottom"
+            android:visibility="invisible"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/discardButton"
+            android:text="@string/save"
+            android:id="@+id/saveButton"
+            android:layout_gravity="right|bottom"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
+
+</FrameLayout>
