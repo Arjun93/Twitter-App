@@ -138,7 +138,11 @@ public class Tab2Fragment extends Fragment {
             public void onClick(View v) {
                 if(isImageFlag) {
                     Intent tweetIntent = new Intent(getActivity().getApplicationContext(),TweetActivity.class);
+                    tweetIntent.putExtra("FilePath",filePath1);
                     startActivity(tweetIntent);
+                }
+                else {
+                    //TODO tweeting video files
                 }
             }
         });

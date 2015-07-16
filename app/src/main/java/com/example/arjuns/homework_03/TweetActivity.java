@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -19,8 +20,12 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
+
+import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -49,6 +54,8 @@ public class TweetActivity extends Activity {
     Dialog auth_dialog;
     WebView myWebView;
     AccessToken accessToken;
+    String path;
+    BitmapFactory.Options myBitmapOptions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,23 +64,38 @@ public class TweetActivity extends Activity {
         //TODO - set something here
         setContentView(R.layout.post_to_twitter_layout);
 
-
+        ImageView tweetImageView = (ImageView) findViewById(R.id.image_to_be_posted);
         Button tweetButton = (Button) findViewById(R.id.tweet_button);
+
+        Intent myIntent = getIntent();
+        path = myIntent.getStringExtra("FilePath");
+        myBitmapOptions = new BitmapFactory.Options();
+        myBitmapOptions.inSampleSize = 2;
+        tweetImageView.setImageBitmap(BitmapFactory.decodeFile(path, myBitmapOptions));
+
         tweetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loginToTwitter();
             }
         });
-
-
-
     }
+
+    /*public void uploadPic(File file, String message,Twitter twitter) throws Exception  {
+        try {
+            StatusUpdate status = new StatusUpdate(message);
+            status.setMedia(file);
+            twitter.updateStatus(status);
+        }
+        catch(TwitterException e){
+            Log.d("TAG", "Pic Upload error" + e.getErrorMessage());
+            throw e;
+        }
+    }*/
 
     public void loginToTwitter() {
 
         mSharedPreferences=getApplicationContext().getSharedPreferences("MyPref", 0);
-
         //Shared preferences
         SharedPreferences.Editor edit = mSharedPreferences.edit();
         edit.putString("CONSUMER_KEY", ConstantValuesClass.TWITTER_CONSUMER_KEY);
@@ -93,12 +115,11 @@ public class TweetActivity extends Activity {
 
     public void postStatus() {
 
-        String message = "Test Tweet";
+        String message = "@MobileApp4";
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
             new UpdateTwitterStatus().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,message);
         else
             new UpdateTwitterStatus().execute();
-
     }
 
     private class TwitterGetAccessTokenTask extends AsyncTask<String, String, String> {
@@ -120,7 +141,6 @@ public class TweetActivity extends Activity {
         protected void onPostExecute(String oauth_url) {
 
             if (oauth_url != null) {
-
                 auth_dialog = new Dialog(TweetActivity.this);
                 auth_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 auth_dialog.setContentView(R.layout.oauth_dialog_layout);
@@ -149,8 +169,6 @@ public class TweetActivity extends Activity {
                         } else if (url.contains("denied")) {
                             auth_dialog.dismiss();
                             Toast.makeText(getApplicationContext(), "Sorry!, Permission Denied", Toast.LENGTH_SHORT).show();
-
-
                         }
                     }
                 });
@@ -219,8 +237,7 @@ public class TweetActivity extends Activity {
          * getting Places JSON
          * */
         protected String doInBackground(String... args) {
-            Log.d("Tweet Text", "> " + args[0]);
-            String status = args[0];
+
             try {
                 ConfigurationBuilder builder = new ConfigurationBuilder();
                 builder.setOAuthConsumerKey(ConstantValuesClass.TWITTER_CONSUMER_KEY);
@@ -234,10 +251,17 @@ public class TweetActivity extends Activity {
                 AccessToken accessToken = new AccessToken(access_token, access_token_secret);
                 Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
 
-                // Update status
-                twitter4j.Status response = twitter.updateStatus(status);
+                File myFile = new File(path);
+                try {
+                    StatusUpdate status = new StatusUpdate(args[0]);
+                    status.setMedia(myFile);
+                    twitter.updateStatus(status);
+                }
+                catch(TwitterException e){
+                    Log.d("TAG", "Pic Upload error" + e.getErrorMessage());
+                    throw e;
+                }
 
-                Log.d("Status", "---> " + response.getText());
             } catch (TwitterException e) {
                 // Error in updating status
                 Log.d("Twitter Update Error", e.getMessage());
