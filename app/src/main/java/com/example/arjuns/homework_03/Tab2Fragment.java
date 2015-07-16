@@ -34,7 +34,7 @@ public class Tab2Fragment extends Fragment {
     ImageView myPhotoView;
     VideoView myVideoView;
     BitmapFactory.Options myBitmapOptions;
-    Button myCaptureImageButton, myCaptureVideoButton, mySaveButton, myDiscardButton;
+    Button myCaptureImageButton, myCaptureVideoButton, mySaveButton, myDiscardButton, myShareButton;
     File myMediaFile;
     String filePath1,filePath2;
     boolean isImageFlag = false;
@@ -46,6 +46,7 @@ public class Tab2Fragment extends Fragment {
         //Referencing the UI components present in camera_layout.xml
         myCaptureImageButton = (Button) view.findViewById(R.id.capturePhotoButton);
         myCaptureVideoButton = (Button) view.findViewById(R.id.captureVideoButton);
+        myShareButton = (Button) view.findViewById(R.id.share_button);
         mySaveButton = (Button) view.findViewById(R.id.saveButton);
         myDiscardButton = (Button) view.findViewById(R.id.discardButton);
         myPhotoView = (ImageView) view.findViewById(R.id.photoView);
@@ -132,6 +133,16 @@ public class Tab2Fragment extends Fragment {
             }
         });
 
+        myShareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isImageFlag) {
+                    Intent tweetIntent = new Intent(getActivity().getApplicationContext(),TweetActivity.class);
+                    startActivity(tweetIntent);
+                }
+            }
+        });
+
         return view;
     }
 
@@ -153,6 +164,7 @@ public class Tab2Fragment extends Fragment {
         myVideoView.setVisibility(View.GONE);
         mySaveButton.setVisibility(View.GONE);
         myDiscardButton.setVisibility(View.GONE);
+        myShareButton.setVisibility(View.GONE);
         filePath1= "";
         filePath2= "";
         switch (requestCode) {
@@ -162,6 +174,7 @@ public class Tab2Fragment extends Fragment {
                     filePath1 = data.getStringExtra("imageFilePath");
                     myVideoView.setVisibility(View.INVISIBLE);
                     myPhotoView.setVisibility(View.VISIBLE);
+                    myShareButton.setVisibility(View.VISIBLE);
                     myBitmapOptions = new BitmapFactory.Options();
                     myBitmapOptions.inSampleSize = 2;
                     Bitmap myBitmap = BitmapFactory.decodeFile(filePath1,myBitmapOptions);
@@ -180,6 +193,7 @@ public class Tab2Fragment extends Fragment {
                     filePath2 = data.getStringExtra("videoFilePath");
                     myPhotoView.setVisibility(View.INVISIBLE);
                     myVideoView.setVisibility(View.VISIBLE);
+                    myShareButton.setVisibility(View.VISIBLE);
                     Log.i("FILEPATH", "" + filePath2);
                     myVideoView.setVideoPath(filePath2); //setting the video on video preview
                     myVideoView.requestFocus();

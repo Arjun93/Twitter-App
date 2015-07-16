@@ -34,10 +34,6 @@
         android:layout_gravity="center"
         android:visibility="invisible"/>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center">
 
         <Button
             android:layout_width="100dp"
@@ -45,7 +41,14 @@
             android:text="@string/discard"
             android:id="@+id/discardButton"
             android:layout_gravity="left|bottom"
-            android:visibility="invisible"/>
+            android:visibility="visible"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Share"
+            android:id="@+id/share_button"
+            android:layout_gravity="center_horizontal|bottom" />
 
         <Button
             android:layout_width="100dp"
@@ -54,8 +57,7 @@
             android:text="@string/save"
             android:id="@+id/saveButton"
             android:layout_gravity="right|bottom"
-            android:visibility="invisible"/>
+            android:visibility="visible"/>
 
-    </RelativeLayout>
 
 </FrameLayout>
