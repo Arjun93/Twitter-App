@@ -31,9 +31,15 @@ public class MainActivity extends Activity {
 
         ActionBar.Tab tab2 = myActionBar.newTab(); //Creating second tab for the Actionbar
         tab2.setText("Take Photo/ Video");
-        TabListener<Tab2Fragment> t2 = new TabListener<Tab2Fragment>(this, "Take Photo/ Video", Tab2Fragment.class);
+        TabListener<Tab2Fragment> t2 = new TabListener<Tab2Fragment>(this, "Take Photo/Video", Tab2Fragment.class);
         tab2.setTabListener(t2); //Adding listener to the second tab
-        myActionBar.addTab(tab2); //Adding first tab to the Actionbar
+        myActionBar.addTab(tab2); //Adding second tab to the Actionbar
+
+        ActionBar.Tab tab3 = myActionBar.newTab(); //Creating third tab for the Actionbar
+        tab3.setText("Timeline");
+        TabListener<Tab3Fragment> t3 = new TabListener<Tab3Fragment>(this, "Timeline", Tab3Fragment.class);
+        tab3.setTabListener(t3); //Adding listener to the third tab
+        myActionBar.addTab(tab3); //Adding third tab to the Actionbar
     }
 
     private class TabListener<T extends Fragment> implements ActionBar.TabListener {

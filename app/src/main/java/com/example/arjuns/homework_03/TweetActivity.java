@@ -81,17 +81,6 @@ public class TweetActivity extends Activity {
         });
     }
 
-    /*public void uploadPic(File file, String message,Twitter twitter) throws Exception  {
-        try {
-            StatusUpdate status = new StatusUpdate(message);
-            status.setMedia(file);
-            twitter.updateStatus(status);
-        }
-        catch(TwitterException e){
-            Log.d("TAG", "Pic Upload error" + e.getErrorMessage());
-            throw e;
-        }
-    }*/
 
     public void loginToTwitter() {
 
