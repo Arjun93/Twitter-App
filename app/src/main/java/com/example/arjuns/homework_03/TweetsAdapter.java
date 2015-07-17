@@ -26,8 +26,6 @@ import twitter4j.Status;
  */
 public class TweetsAdapter extends BaseAdapter {
     private Context mContext;
-    private Cursor myMediaCursor;
-    Tab1Fragment myFetcher;
     private static LayoutInflater myInflater;
     ListView myListView;
     TextView myListElementTextView;
