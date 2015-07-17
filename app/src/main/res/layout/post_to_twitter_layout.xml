@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,13 +7,22 @@
         android:layout_width="200dp"
         android:layout_height="300dp"
         android:id="@+id/image_to_be_posted"
-        android:layout_gravity="center" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tweet"
         android:id="@+id/tweet_button"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true" />
 
-</FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/text_view_tweet"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/image_to_be_posted"/>
+
+</RelativeLayout>
