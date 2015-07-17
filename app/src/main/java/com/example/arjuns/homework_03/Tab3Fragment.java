@@ -89,10 +89,6 @@ public class Tab3Fragment extends Fragment {
 
     public void readTimeLine(List<twitter4j.Status> statuses) {
 
-        /*for (twitter4j.Status status : statuses) {
-            values.add("@" + status.getUser().getScreenName() + " - " + status.getText());
-            System.out.println("Arjun "+"@" + status.getUser().getScreenName() + " - " + status.getText());
-        }*/
         myListView.setAdapter(new TweetsAdapter(view.getContext(), statuses));
 
     }

@@ -32,19 +32,12 @@ public class TweetsAdapter extends BaseAdapter {
     ListView myListView;
     TextView myListElementTextView;
     List<twitter4j.Status> tweetData;
-    ArrayList<String> values = new ArrayList<String>();
 
     // Constructor
     public TweetsAdapter(Context c, List<twitter4j.Status> statuses){
         mContext = c;
         myInflater =  (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         tweetData = statuses;
-
-        /*for (twitter4j.Status status : statuses) {
-            values.add("@" + status.getUser().getScreenName() + " - " + status.getText());
-            System.out.println("Arjun "+"@" + status.getUser().getScreenName() + " - " + status.getText());
-        }*/
-
     }
 
     @Override

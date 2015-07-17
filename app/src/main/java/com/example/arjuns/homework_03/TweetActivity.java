@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -61,7 +63,6 @@ public class TweetActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //TODO - set something here
         setContentView(R.layout.post_to_twitter_layout);
 
         ImageView tweetImageView = (ImageView) findViewById(R.id.image_to_be_posted);
@@ -104,7 +105,11 @@ public class TweetActivity extends Activity {
 
     public void postStatus() {
 
-        String message = "@MobileApp4";
+        SimpleDateFormat postDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String currentTime = postDateFormat.format(new Date());
+        String tag= "@" + getResources().getString(R.string.twitter_tag);
+
+        String message = tag +"; " + currentTime;
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB)
             new UpdateTwitterStatus().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,message);
         else
