@@ -43,14 +43,10 @@ public class TweetActivity extends Activity {
 
 
     private static Twitter myTwitter;
-    // Twitter
     private static RequestToken requestToken;
     private static SharedPreferences mySharedPreferences;
     Boolean isTwitterLoggedIn, authFlag;
-    // Shared Preferences
-
-    private String oauthUrl = "", oauthVerifier = "";
-    //oauth url
+    private String oauthUrl = "", oauthVerifier = "", resultantTweet;
     ProgressDialog myProgDialog;
     Dialog authDialog;
     WebView myWebView;
@@ -59,7 +55,6 @@ public class TweetActivity extends Activity {
     Button tweetButton;
     ImageView tweetImageView;
     TextView tweetTextView;
-    String resultantTweet;
     BitmapFactory.Options myBitmapOptions;
 
     @Override
@@ -68,73 +63,89 @@ public class TweetActivity extends Activity {
         setContentView(R.layout.post_to_twitter_layout);
 
         Intent myIntent = getIntent();
-        myPath = myIntent.getExtras().getString("FilePath");
+        myPath = myIntent.getExtras().getString("FilePath"); //Obtaining the file path
+
+        //Initializing the UI components present in post_to_twitter_layout
         tweetButton = (Button) findViewById(R.id.tweet_button);
         tweetImageView = (ImageView) findViewById(R.id.image_to_be_posted);
         tweetTextView = (TextView) findViewById(R.id.text_view_tweet);
 
-        mySharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
+        //Obtaining sharedpreferences
+        mySharedPreferences = getApplicationContext().getSharedPreferences("MyPreference", 0);
         mySharedPreferences = getPreferences(0);
         isTwitterLoggedIn = mySharedPreferences.getBoolean(ConstantValuesClass.IS_TWITTER_LOGGEDIN_INITIALLY,false);
-
+        //If the user has already logged into twitter, the user is allowed to check the content he would be tweeting.
         if(isTwitterLoggedIn) {
             authFlag = true;
             checkTweetContent();
         }
+        //If the user is not looged into twitter, he/she is displayed an alert dialog indicating that this app would be using his/her twitter login credentials.
         else {
             createAndShowAlertDialog();
         }
-
     }
 
+
+    /**
+    * createAndShowAlertDialog() creates and displays an alert dialog indicating that this application would be
+    * using his/her twitter login credentials
+     */
     public void createAndShowAlertDialog() {
+
         AlertDialog.Builder myAlertDialogBuilder = new AlertDialog.Builder(TweetActivity.this);
-        myAlertDialogBuilder.setTitle("Request Twitter Access");
-        myAlertDialogBuilder.setMessage("Homework-04 application would like to access your twitter account on behalf of you.");
+        myAlertDialogBuilder.setTitle("Request Twitter Access"); //Setting the alert dialog title
+        myAlertDialogBuilder.setMessage("Homework-04 application would like to access your twitter account on behalf of you."); //Setting the alert dialog meesage
         myAlertDialogBuilder.setCancelable(true);
+
+        //If the user clicks the OK button
         myAlertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 loginToTwitter();
             }
         });
-        myAlertDialogBuilder.setNegativeButton("Dont allow", new DialogInterface.OnClickListener() {
+
+        //If the user clicks DONT ALLOW
+        myAlertDialogBuilder.setNegativeButton("DONT ALLOW", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
-                finishActivity();
+                finish();
             }
         });
-        AlertDialog myAlertDialog = myAlertDialogBuilder.create();
-        myAlertDialog.show();
+        AlertDialog myAlertDialog = myAlertDialogBuilder.create(); //Creating an alert dialog
+        myAlertDialog.show(); //Displaying altert dialog
     }
 
     /**
-     * Method to log into twitter
+     * loginToTwitter() enables the user to log into twitter
      */
     public void loginToTwitter() {
 
-        //Shared preferences
         SharedPreferences.Editor edit = mySharedPreferences.edit();
         edit.putString("CONSUMER_KEY", ConstantValuesClass.TWITTER_CONSUMER_KEY);
         edit.putString("CONSUMER_SECRET", ConstantValuesClass.TWITTER_CONSUMER_SECRET);
         edit.commit();
-
+        //Obtaining the shared preferences
         mySharedPreferences = getPreferences(0);
         myTwitter = new TwitterFactory().getInstance();
         myTwitter.setOAuthConsumer(mySharedPreferences.getString("CONSUMER_KEY", ConstantValuesClass.TWITTER_CONSUMER_KEY), mySharedPreferences.getString("CONSUMER_SECRET", ConstantValuesClass.TWITTER_CONSUMER_SECRET));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            new TwitterGetAccessTokenTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new ObtainAccessTokenTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         else
-            new TwitterGetAccessTokenTask().execute();
+            new ObtainAccessTokenTask().execute();
     }
 
+    /**
+     * checkTweetContent() enables the user to have a look at the content he/she would be tweeting
+     */
     private void checkTweetContent() {
-        try {
 
+        try {
             TextView tweetText = (TextView) findViewById(R.id.text_view_tweet);
             tweetText.setVisibility(View.VISIBLE);
             tweetButton.setVisibility(View.VISIBLE);
 
+            //Setting the twitter status
             String handle = "@MobileApp4";
             String myAndrewID = "asanthan";
             String myDeviceName = Build.MANUFACTURER + " " + Build.MODEL;
@@ -144,15 +155,17 @@ public class TweetActivity extends Activity {
             String myCurrentDateTime = myDateFormat.format(myCurrentDate);
             resultantTweet = handle + "; " + myAndrewID + "; " + myDeviceName + "; " + deviceOsVersion + "; " + myCurrentDateTime;
 
+            //Setting the BitmapOptions for the photo to be displayed.
             myBitmapOptions = new BitmapFactory.Options();
             myBitmapOptions.inSampleSize = 2;
             tweetImageView.setImageBitmap(BitmapFactory.decodeFile(myPath, myBitmapOptions));
             tweetTextView.setText(resultantTweet);
 
+            //OnClickListener for tweet button
             tweetButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //loginToTwitter();
+                    //Post status only if the user is logged in.
                     if (authFlag) {
                         postStatus();
                     } else {
@@ -166,25 +179,24 @@ public class TweetActivity extends Activity {
     }
 
     /**
-     * Method to post status
+     * postStatus() allows the status to be posted.
      */
     public void postStatus() {
-
-        //String message = getMessage();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            new UpdateTwitterStatus().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, resultantTweet);
+            new PostTwitterStatus().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, resultantTweet);
         else
-            new UpdateTwitterStatus().execute();
+            new PostTwitterStatus().execute();
     }
 
-    private class TwitterGetAccessTokenTask extends AsyncTask<String, String, String> {
+
+    private class ObtainAccessTokenTask extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... args) {
             try {
                 requestToken = myTwitter.getOAuthRequestToken(ConstantValuesClass.TWITTER_CALLBACK_URL);
                 oauthUrl = requestToken.getAuthorizationURL();
-                Log.d("Oauth URL", oauthUrl);
+                Log.d("Twitter Oauth URL", oauthUrl);
             } catch (TwitterException e) {
                 e.printStackTrace();
             }
@@ -197,15 +209,14 @@ public class TweetActivity extends Activity {
             if (oauth_url != null) {
                 authDialog = new Dialog(TweetActivity.this);
                 authDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-
                 authDialog.setContentView(R.layout.oauth_dialog_layout);
+                //Creating the webview for authentication dialog
                 myWebView = (WebView) authDialog.findViewById(R.id.my_web_view);
                 myWebView.getSettings().setJavaScriptEnabled(true);
                 myWebView.loadUrl(oauth_url);
+
                 myWebView.setWebViewClient(new WebViewClient() {
                     boolean isAuthComplete = false;
-
                     @Override
                     public void onPageStarted(WebView view, String url, Bitmap favicon) {
                         super.onPageStarted(view, url, favicon);
@@ -220,44 +231,43 @@ public class TweetActivity extends Activity {
                             Uri uri = Uri.parse(url);
                             oauthVerifier = uri.getQueryParameter("oauth_verifier");
                             authDialog.dismiss();
-                            new AccessTokenGet().execute();
-                        } else if (url.contains("denied")) {
+                            new FetchAccessToken().execute();
+                        }
+                        else if (url.contains("denied")) {
                             authDialog.dismiss();
-                            Toast.makeText(getApplicationContext(), "Sorry !, Permission Denied", Toast.LENGTH_SHORT).show();
-
-
+                            Toast.makeText(getApplicationContext(), "Permission has been denied", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+
+                //Displaying authentication dialog
                 authDialog.show();
                 authDialog.setCancelable(true);
             }
             else {
-                Toast.makeText(getApplicationContext(), "Sorry !, Network Error or Invalid Credentials", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Network Error or Invalid Credentials", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     /**
-     * To show a progress dialog
-     * @param message
+     * showProgressDialog() displays progress bar when twitter status is being posted
      */
     public void showProgressDialog(String message) {
+
         myProgDialog = new ProgressDialog(this);
-        myProgDialog.setMessage(message);
-        myProgDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        myProgDialog.setMessage(message); //Setting the message for progress dialog
+        myProgDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         myProgDialog.setIndeterminate(true);
-        myProgDialog.show();
+        myProgDialog.show(); //Displaying progress dialog
+
     }
 
-    /**
-     * To hide the progress dialog
+    /*
+    * FetchAccessToken is an async task used for obtaining the access token
      */
-    public void hideProgressDialog() {
-        myProgDialog.hide();
-    }
+    private class FetchAccessToken extends AsyncTask<String, String, Boolean> {
 
-    private class AccessTokenGet extends AsyncTask<String, String, Boolean> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -266,14 +276,17 @@ public class TweetActivity extends Activity {
         @Override
         protected Boolean doInBackground(String... args) {
             try {
+                //Obtaining requestToken
                 accessToken = myTwitter.getOAuthAccessToken(requestToken, oauthVerifier);
                 SharedPreferences.Editor edit = mySharedPreferences.edit();
                 edit.putString(ConstantValuesClass.PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
                 edit.putString(ConstantValuesClass.PREF_KEY_OAUTH_SECRET, accessToken.getTokenSecret());
+                //Ontaining the twitter user name
                 User user = myTwitter.showUser(accessToken.getUserId());
                 edit.putString(ConstantValuesClass.USER_NAME, user.getName());
                 edit.commit();
-            } catch (TwitterException e) {
+            }
+            catch (TwitterException e) {
                 e.printStackTrace();
             }
             return true;
@@ -282,23 +295,24 @@ public class TweetActivity extends Activity {
         @Override
         protected void onPostExecute(Boolean response) {
             if (response) {
-                // postStatus();
-                authFlag = true;
-
+                authFlag = true; //Setting back authentication flag to true
                 SharedPreferences.Editor edit = mySharedPreferences.edit();
                 edit.putBoolean(ConstantValuesClass.IS_TWITTER_LOGGEDIN_INITIALLY, true);
                 edit.commit();
-                checkTweetContent();
+                checkTweetContent(); //Enabling the user to check the tweet content after first time log in.
             }
         }
     }
 
-    class UpdateTwitterStatus extends AsyncTask<String, String, String> {
+    /*
+    * PostTwitterStatus is an async task that tweets the hardcoded twitter status
+     */
+    class PostTwitterStatus extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog("Tweeting your status..");
+            showProgressDialog("Tweeting in progress..."); //Show progress dialog while tweeting
         }
 
         protected String doInBackground(String... args) {
@@ -308,50 +322,37 @@ public class TweetActivity extends Activity {
                 ConfigurationBuilder builder = new ConfigurationBuilder();
                 builder.setOAuthConsumerKey(ConstantValuesClass.TWITTER_CONSUMER_KEY);
                 builder.setOAuthConsumerSecret(ConstantValuesClass.TWITTER_CONSUMER_SECRET);
-
-                String access_token = mySharedPreferences.getString(ConstantValuesClass.PREF_KEY_OAUTH_TOKEN, "");
-                // Access Token
-
-                String access_token_secret = mySharedPreferences.getString(ConstantValuesClass.PREF_KEY_OAUTH_SECRET, "");
-                // Access Token Secret
+                String access_token = mySharedPreferences.getString(ConstantValuesClass.PREF_KEY_OAUTH_TOKEN, ""); //Obtaining access token
+                String access_token_secret = mySharedPreferences.getString(ConstantValuesClass.PREF_KEY_OAUTH_SECRET, ""); //Obtaining access token secret
 
                 AccessToken accessToken = new AccessToken(access_token, access_token_secret);
-                //Fetch the token
                 Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);
-
-                StatusUpdate statusUpdate = new StatusUpdate(status);
+                StatusUpdate myStatusUpdate = new StatusUpdate(status);
                 File file = new File(myPath);
+                //Updating the twitter status
                 if (file.exists()) {
-                    statusUpdate.setMedia(file);
-                    twitter4j.Status response = twitter.updateStatus(statusUpdate);
-                    Log.d("Status - Twitter", "> " + response.getText());
-                } // Update status
+                    myStatusUpdate.setMedia(file);
+                    twitter4j.Status response = twitter.updateStatus(myStatusUpdate);
+                    Log.d("Twitter Status", " " + response.getText());
+                }
 
-            } catch (TwitterException e) {
-                // Error in updating status
-                Log.d("Twitter Update Error", e.getMessage());
+            }
+            catch (TwitterException e) {
+                Log.d("Twitter Update Failed", e.getMessage());
             }
             return null;
         }
 
         protected void onPostExecute(String file_url) {
-            hideProgressDialog();
+            myProgDialog.hide();
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplicationContext(),
-                            "Status tweeted successfully", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(getApplicationContext(), "Tweeted!", Toast.LENGTH_SHORT).show();
                 }
             });
-            finishActivity();
+            finish();
         }
-    }
-
-    public void finishActivity() {
-        Intent resultIntent = new Intent();
-        this.setResult(Activity.RESULT_OK, resultIntent);
-        this.finish();
     }
 }
 
