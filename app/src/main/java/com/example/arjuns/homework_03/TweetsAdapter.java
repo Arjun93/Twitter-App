@@ -31,7 +31,6 @@ public class TweetsAdapter extends BaseAdapter {
     TextView myListElementTextView;
     List<twitter4j.Status> tweetData;
 
-    // Constructor
     public TweetsAdapter(Context c, List<twitter4j.Status> statuses){
         mContext = c;
         myInflater =  (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -62,7 +61,7 @@ public class TweetsAdapter extends BaseAdapter {
         }
         myListView = (ListView)view.findViewById(R.id.mylistView);
         myListElementTextView = (TextView)view.findViewById(R.id.list_view_text_view);
-        myListElementTextView.setText(tweetData.get(position).getText());
+        myListElementTextView.setText(tweetData.get(position).getText()); //Setting the text for each listview element
 
         return view;
     }

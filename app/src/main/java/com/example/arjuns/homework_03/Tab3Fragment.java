@@ -45,6 +45,7 @@ public class Tab3Fragment extends Fragment {
         myListView = (ListView)view.findViewById(R.id.mylistView);
         myRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swiperefresh);
 
+        //Refresing the list view contents
         myRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -56,6 +57,7 @@ public class Tab3Fragment extends Fragment {
         Twitter twitter = new TwitterFactory().getInstance();
         new CollectTwitterFeed().execute();
 
+        //OnItemClickListener for list view
          myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
              @Override
              public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -79,23 +81,15 @@ public class Tab3Fragment extends Fragment {
         return view;
     }
 
-    public Activity returnActivity() {
-        return this.getActivity();
-    }
+
 
     class CollectTwitterFeed extends AsyncTask<String, String, List<twitter4j.Status>> {
 
-        /**
-         * Before starting background thread Show Progress Dialog
-         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
-        /**
-         * getting Places JSON
-         */
         protected List<twitter4j.Status> doInBackground(String... args) {
             try {
                 ConfigurationBuilder cb = new ConfigurationBuilder();
@@ -117,17 +111,11 @@ public class Tab3Fragment extends Fragment {
         }
 
         protected void onPostExecute(List<twitter4j.Status> statuses) {
-
             readTimeLine(statuses);
-
-
         }
     }
 
     public void readTimeLine(List<twitter4j.Status> statuses) {
-
         myListView.setAdapter(new TweetsAdapter(view.getContext(), statuses));
-
     }
-
 }
