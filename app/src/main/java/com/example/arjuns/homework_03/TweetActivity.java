@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -54,8 +55,10 @@ public class TweetActivity extends Activity {
     String myPath;
     Button tweetButton;
     ImageView tweetImageView;
+    VideoView tweetVideoView;
     EditText tweetEditText;
     BitmapFactory.Options myBitmapOptions;
+    String mediaType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,10 +67,13 @@ public class TweetActivity extends Activity {
 
         Intent myIntent = getIntent();
         myPath = myIntent.getExtras().getString("FilePath"); //Obtaining the file path
+        mediaType = myIntent.getExtras().getString("MediaType"); //Obtaining the media type
+        //Toast.makeText(getApplicationContext(),""+mediaType,Toast.LENGTH_SHORT).show();
 
         //Initializing the UI components present in post_to_twitter_layout
         tweetButton = (Button) findViewById(R.id.tweet_button);
         tweetImageView = (ImageView) findViewById(R.id.image_to_be_posted);
+        tweetVideoView = (VideoView) findViewById(R.id.video_to_be_posted);
         tweetEditText = (EditText) findViewById(R.id.edit_text_tweet);
 
         //Obtaining sharedpreferences
@@ -154,11 +160,23 @@ public class TweetActivity extends Activity {
             Date myCurrentDate = new Date();
             String myCurrentDateTime = myDateFormat.format(myCurrentDate);
             resultantTweet = handle + "; " + myAndrewID + "; " + myDeviceName + "; " + deviceOsVersion + "; " + myCurrentDateTime;
+            if(mediaType.equals("Image"))
+            {
+                tweetImageView.setVisibility(View.VISIBLE);
+                //Setting the BitmapOptions for the photo to be displayed.
+                myBitmapOptions = new BitmapFactory.Options();
+                myBitmapOptions.inSampleSize = 2;
+                tweetImageView.setImageBitmap(BitmapFactory.decodeFile(myPath, myBitmapOptions));
+            }
+            else
+            {
+                tweetVideoView.setVisibility(View.VISIBLE);
+                tweetVideoView.setVideoPath(myPath); //setting the video on video preview
+                tweetVideoView.requestFocus();
+                tweetVideoView.start();
+            }
 
-            //Setting the BitmapOptions for the photo to be displayed.
-            myBitmapOptions = new BitmapFactory.Options();
-            myBitmapOptions.inSampleSize = 2;
-            tweetImageView.setImageBitmap(BitmapFactory.decodeFile(myPath, myBitmapOptions));
+
             tweetEditText.setText(resultantTweet);
 
             //OnClickListener for tweet button

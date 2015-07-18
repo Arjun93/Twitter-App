@@ -7,7 +7,15 @@
         android:layout_width="300dp"
         android:layout_height="400dp"
         android:id="@+id/image_to_be_posted"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
+
+    <VideoView
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:id="@+id/video_to_be_posted"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
 
     <Button
         android:layout_width="wrap_content"

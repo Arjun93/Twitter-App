@@ -139,10 +139,14 @@ public class Tab2Fragment extends Fragment {
                 if(isImageFlag) {
                     Intent tweetIntent = new Intent(getActivity().getApplicationContext(),TweetActivity.class);
                     tweetIntent.putExtra("FilePath",filePath1);
+                    tweetIntent.putExtra("MediaType","Image");
                     startActivity(tweetIntent);
                 }
                 else {
-                    //TODO tweeting video files
+                    Intent tweetIntent = new Intent(getActivity().getApplicationContext(),TweetActivity.class);
+                    tweetIntent.putExtra("FilePath",filePath2);
+                    tweetIntent.putExtra("MediaType","Video");
+                    startActivity(tweetIntent);
                 }
             }
         });
