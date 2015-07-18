@@ -19,8 +19,8 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -54,7 +54,7 @@ public class TweetActivity extends Activity {
     String myPath;
     Button tweetButton;
     ImageView tweetImageView;
-    TextView tweetTextView;
+    EditText tweetEditText;
     BitmapFactory.Options myBitmapOptions;
 
     @Override
@@ -68,7 +68,7 @@ public class TweetActivity extends Activity {
         //Initializing the UI components present in post_to_twitter_layout
         tweetButton = (Button) findViewById(R.id.tweet_button);
         tweetImageView = (ImageView) findViewById(R.id.image_to_be_posted);
-        tweetTextView = (TextView) findViewById(R.id.text_view_tweet);
+        tweetEditText = (EditText) findViewById(R.id.edit_text_tweet);
 
         //Obtaining sharedpreferences
         mySharedPreferences = getApplicationContext().getSharedPreferences("MyPreference", 0);
@@ -141,7 +141,7 @@ public class TweetActivity extends Activity {
     private void checkTweetContent() {
 
         try {
-            TextView tweetText = (TextView) findViewById(R.id.text_view_tweet);
+            EditText tweetText = (EditText) findViewById(R.id.edit_text_tweet);
             tweetText.setVisibility(View.VISIBLE);
             tweetButton.setVisibility(View.VISIBLE);
 
@@ -159,7 +159,7 @@ public class TweetActivity extends Activity {
             myBitmapOptions = new BitmapFactory.Options();
             myBitmapOptions.inSampleSize = 2;
             tweetImageView.setImageBitmap(BitmapFactory.decodeFile(myPath, myBitmapOptions));
-            tweetTextView.setText(resultantTweet);
+            tweetEditText.setText(resultantTweet);
 
             //OnClickListener for tweet button
             tweetButton.setOnClickListener(new View.OnClickListener() {

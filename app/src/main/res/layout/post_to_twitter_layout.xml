@@ -12,15 +12,15 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tweet"
+        android:text="@string/tweet_me"
         android:id="@+id/tweet_button"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true" />
 
-    <TextView
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text_view_tweet"
+        android:id="@+id/edit_text_tweet"
         android:padding="10dp"
         android:paddingLeft="30dp"
         android:layout_centerHorizontal="true"
